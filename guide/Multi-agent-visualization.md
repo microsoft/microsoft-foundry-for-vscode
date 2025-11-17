@@ -11,6 +11,12 @@ from agent_framework.observability import setup_observability
 setup_observability(vs_code_extension_port=4319)
 ```
 
+Note: Configure the application's observability settings to capture the agent's inputs and outputs, including any sensitive data. Example configuration:
+
+```python
+setup_observability(vs_code_extension_port=4319, enable_sensitive_data=True)
+```
+
 To monitor and visualize your multi-agent workflow execution in real time
 
 1. Open the command palette (Ctrl+Shift+P).
@@ -50,15 +56,14 @@ var resourceBuilder = OpenTelemetry
 var s_tracerProvider = OpenTelemetry
     .Sdk.CreateTracerProviderBuilder()
     .SetResourceBuilder(resourceBuilder)
-    .AddSource("Microsoft.Agents.AI.Workflows*")
+    .AddSource("Microsoft.Agents.AI.*") // All agent framework sources
+    .SetSampler(new AlwaysOnSampler()) // Ensure all traces are sampled
     .AddOtlpExporter(options =>
     {
         options.Endpoint = new Uri(otlpEndpoint);
         options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
     })
     .Build();
-
-Console.WriteLine($"OpenTelemetry configured. OTLP endpoint: {otlpEndpoint}");
 ```
 
 To monitor and visualize your multi-agent workflow execution in real time
