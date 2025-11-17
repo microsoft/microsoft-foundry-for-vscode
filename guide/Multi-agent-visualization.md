@@ -1,4 +1,4 @@
-# Multi-Agent Visualization in Visual Studio Code
+# Multi-agent Visualization in Visual Studio Code
 
 By using the Microsoft Foundry for Visual Studio Code extension, you can visualize the interactions between agents and how they collaborate to achieve your desired outcome.
 
