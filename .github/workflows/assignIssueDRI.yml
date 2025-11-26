@@ -11,7 +11,7 @@ jobs:
   assignIssue:
     name: Assign issue to DRI responsible
     runs-on: ubuntu-latest
-    if: github.repository == 'microsoft/ai-foundry-for-vscode'
+    if: github.repository == 'microsoft/microsoft-foundry-for-vscode'
     steps:
       - uses: actions/checkout@v3
       - name: Created internally

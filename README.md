@@ -31,7 +31,7 @@ The Microsoft Foundry extension for Visual Studio Code has an dependency on the 
 - [Microsoft Foundry Documentation](https://learn.microsoft.com/azure/ai-studio/what-is-ai-studio)
 
 ## Support
-Support for this extension is provided on our [GitHub Issue Tracker](https://github.com/microsoft/ai-foundry-for-vscode/issues). You can submit a bug report, a feature suggestion or participate in discussions.
+Support for this extension is provided on our [GitHub Issue Tracker](https://github.com/microsoft/microsoft-foundry-for-vscode/issues). You can submit a bug report, a feature suggestion or participate in discussions.
 
 You can also send any bugs or concerns privately to us at [vscai-support@microsoft.com](mailto:vscai-support@microsoft.com)
 
