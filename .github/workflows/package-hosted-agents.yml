@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "samples/hosted-agent/**"
+      - ".github/workflows/package-hosted-agents.yml"
     branches:
       - hui/workflow-samples
       - main
@@ -18,6 +19,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Read version from manifest
+        id: version
+        run: |
+          VERSION=$(jq -r '.channels.stable.sampleVersion' samples/hosted-agent/version-manifest.json)
+          echo "tag=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Create dotnet agent package
         run: |
@@ -34,6 +41,8 @@ jobs:
       - name: Upload packages to Release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: Hosted Agents ${{ steps.version.outputs.tag }}
           files: |
             samples/hosted-agent/dotnet-hosted-agents.zip
             samples/hosted-agent/python-hosted-agents.zip
