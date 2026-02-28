@@ -1,0 +1,21 @@
+
+{
+  "schemaVersion": "1.0",
+  "lastUpdated": "2026-02-28T10:00:00Z",
+  "channels": {
+    "stable": {
+      "branch": "hui/workflow-samples",
+      "sampleVersion": "v1.0.0",
+      "downloadUrl": "https://github.com/microsoft/foundry-hosted-agent-samples/archive/refs/heads/hui/workflow-samples.zip",
+      "sha256": "abc123...",
+      "lastUpdated": "2026-02-28T10:00:00Z"
+    },
+    "pre-release": {
+      "branch": "hui/workflow-samples-pre-release",
+      "sampleVersion": "v1.1.0",
+      "downloadUrl": "https://github.com/microsoft/foundry-hosted-agent-samples/archive/refs/heads/hui/workflow-samples-pre-release.zip",
+      "sha256": "def456...",
+      "lastUpdated": "2026-02-28T14:30:00Z"
+    }
+  }
+}

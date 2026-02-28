@@ -1,0 +1,48 @@
+name: Package Hosted Agents
+
+on:
+  push:
+    paths:
+      - "samples/hosted-agent/**"
+    branches:
+      - hui/workflow-samples
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  package-agents:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create dotnet agent package
+        run: |
+          cd samples/hosted-agent
+          zip -r dotnet-hosted-agents.zip dotnet/
+          ls -lh dotnet-hosted-agents.zip
+
+      - name: Create python agent package
+        run: |
+          cd samples/hosted-agent
+          zip -r python-hosted-agents.zip python/
+          ls -lh python-hosted-agents.zip
+
+      - name: Upload packages to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            samples/hosted-agent/dotnet-hosted-agents.zip
+            samples/hosted-agent/python-hosted-agents.zip
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload packages as artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: hosted-agents-packages
+          path: samples/hosted-agent/*-hosted-agents.zip
+          retention-days: 30
