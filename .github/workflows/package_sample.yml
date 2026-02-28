@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - "samples/hosted-agent/**"
-      - ".github/workflows/package-sample.yml"
+      - ".github/workflows/package_sample.yml"
     branches:
       - hui/workflow-samples
       - main
