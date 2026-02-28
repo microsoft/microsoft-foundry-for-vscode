@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - "samples/hosted-agent/**"
-      - ".github/workflows/package-hosted-agents.yml"
+      - ".github/workflows/package-sample.yml"
     branches:
       - hui/workflow-samples
       - main
@@ -29,14 +29,14 @@ jobs:
       - name: Create dotnet agent package
         run: |
           cd samples/hosted-agent
-          zip -r dotnet-hosted-agents.zip dotnet/
-          ls -lh dotnet-hosted-agents.zip
+          zip -r dotnet.zip dotnet/
+          ls -lh dotnet.zip
 
       - name: Create python agent package
         run: |
           cd samples/hosted-agent
-          zip -r python-hosted-agents.zip python/
-          ls -lh python-hosted-agents.zip
+          zip -r python.zip python/
+          ls -lh python.zip
 
       - name: Upload packages to Release
         uses: softprops/action-gh-release@v1
@@ -44,8 +44,8 @@ jobs:
           tag_name: ${{ steps.version.outputs.tag }}
           name: Hosted Agents ${{ steps.version.outputs.tag }}
           files: |
-            samples/hosted-agent/dotnet-hosted-agents.zip
-            samples/hosted-agent/python-hosted-agents.zip
+            samples/hosted-agent/dotnet.zip
+            samples/hosted-agent/python.zip
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -54,5 +54,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: hosted-agents-packages
-          path: samples/hosted-agent/*-hosted-agents.zip
+          path: |
+            samples/hosted-agent/dotnet.zip
+            samples/hosted-agent/python.zip
           retention-days: 30
