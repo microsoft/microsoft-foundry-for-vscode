@@ -1,10 +1,16 @@
 name: Release Hosted Agents
 
 on:
-  push:
-    branches:
-      - hui/workflow-samples
   workflow_dispatch:
+    inputs:
+      channel:
+        description: "Release channel"
+        required: true
+        type: choice
+        options:
+          - stable
+          - pre-release
+        default: stable
 
 permissions:
   contents: write
@@ -18,11 +24,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Read version from manifest
+      - name: Read version and branch from manifest
         id: version
         run: |
-          VERSION=$(jq -r '.channels.stable.sampleVersion' samples/hosted-agent/version-manifest.json)
+          CHANNEL="${{ github.event.inputs.channel }}"
+          VERSION=$(jq -r ".channels.\"$CHANNEL\".sampleVersion" samples/hosted-agent/version-manifest.json)
+          BRANCH=$(jq -r ".channels.\"$CHANNEL\".branch" samples/hosted-agent/version-manifest.json)
           echo "tag=$VERSION" >> $GITHUB_OUTPUT
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+
+      - name: Checkout sample branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.version.outputs.branch }}
+          path: sample-source
+
+      - name: Copy samples from target branch
+        run: |
+          rm -rf samples/hosted-agent/dotnet samples/hosted-agent/python
+          cp -r sample-source/samples/hosted-agent/dotnet samples/hosted-agent/dotnet
+          cp -r sample-source/samples/hosted-agent/python samples/hosted-agent/python
 
       - name: Create dotnet agent package
         run: |
@@ -68,6 +89,7 @@ jobs:
         with:
           tag_name: ${{ needs.build.outputs.version }}
           name: Hosted Agents ${{ needs.build.outputs.version }}
+          prerelease: ${{ github.event.inputs.channel == 'pre-release' }}
           files: |
             samples/hosted-agent/dotnet.zip
             samples/hosted-agent/python.zip
