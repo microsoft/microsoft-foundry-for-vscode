@@ -1,0 +1,98 @@
+name: Release Hosted Agents
+
+on:
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: "Release channel"
+        required: true
+        type: choice
+        options:
+          - stable
+          - pre-release
+        default: stable
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.tag }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Read version and branch from manifest
+        id: version
+        run: |
+          CHANNEL="${{ github.event.inputs.channel }}"
+          VERSION=$(jq -r ".channels.\"$CHANNEL\".sampleVersion" samples/hosted-agent/version-manifest.json)
+          BRANCH=$(jq -r ".channels.\"$CHANNEL\".branch" samples/hosted-agent/version-manifest.json)
+          echo "tag=$VERSION" >> $GITHUB_OUTPUT
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+
+      - name: Checkout sample branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.version.outputs.branch }}
+          path: sample-source
+
+      - name: Copy samples from target branch
+        run: |
+          rm -rf samples/hosted-agent/dotnet samples/hosted-agent/python
+          cp -r sample-source/samples/hosted-agent/dotnet samples/hosted-agent/dotnet
+          cp -r sample-source/samples/hosted-agent/python samples/hosted-agent/python
+
+      - name: Create dotnet agent package
+        run: |
+          cd samples/hosted-agent
+          zip -r dotnet.zip dotnet/
+          ls -lh dotnet.zip
+
+      - name: Create python agent package
+        run: |
+          cd samples/hosted-agent
+          zip -r python.zip python/
+          ls -lh python.zip
+
+      - name: Upload packages as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: hosted-agents-packages
+          path: |
+            samples/hosted-agent/dotnet.zip
+            samples/hosted-agent/python.zip
+          retention-days: 30
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    # ------------------------------------------------------------
+    # This environment requires manual approval before proceeding.
+    # Go to: Settings → Environments → release-approval
+    # Add the specific GitHub users/teams as "Required reviewers".
+    # They will receive a notification with an approval link when
+    # this workflow runs.
+    # ------------------------------------------------------------
+    environment: release-approval
+    steps:
+      - name: Download packages
+        uses: actions/download-artifact@v4
+        with:
+          name: hosted-agents-packages
+          path: samples/hosted-agent/
+
+      - name: Upload packages to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ needs.build.outputs.version }}
+          name: Hosted Agents ${{ needs.build.outputs.version }}
+          prerelease: ${{ github.event.inputs.channel == 'pre-release' }}
+          files: |
+            samples/hosted-agent/dotnet.zip
+            samples/hosted-agent/python.zip
+          generate_release_notes: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
