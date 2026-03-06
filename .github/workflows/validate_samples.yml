@@ -1,0 +1,152 @@
+name: Validate Samples
+
+on:
+  schedule:
+    - cron: "0 1 * * *" # Daily at 9:00 AM Beijing time (UTC+8 → 01:00 UTC)
+  push:
+    paths:
+      - "samples/hosted-agent/**"
+    branches:
+      - hui/validation-ci
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  validate:
+    name: Validate ${{ matrix.language }}/${{ matrix.type }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false # Run all matrix jobs even if one fails
+      matrix:
+        include:
+          - language: dotnet
+            type: agent
+          - language: dotnet
+            type: workflow
+          - language: python
+            type: agent
+          - language: python
+            type: workflow
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Prepare sample directory
+        id: prepare
+        env:
+          SAFE_PROJECT_NAME: SampleAgent
+          AGENT_NAME: sample-agent
+        run: |
+          WORK_DIR=$(mktemp -d)
+          cp -r "samples/hosted-agent/${{ matrix.language }}/${{ matrix.type }}/." "$WORK_DIR/"
+
+          # Rename any files whose names contain the SafeProjectName placeholder
+          find "$WORK_DIR" -name '*{{SafeProjectName}}*' | while read -r f; do
+            mv "$f" "$(echo "$f" | sed "s/{{SafeProjectName}}/$SAFE_PROJECT_NAME/g")"
+          done
+
+          # Replace placeholder values inside all text files
+          find "$WORK_DIR" -type f -print0 \
+            | xargs -0 sed -i \
+                -e "s/{{SafeProjectName}}/$SAFE_PROJECT_NAME/g" \
+                -e "s/{{AgentName}}/$AGENT_NAME/g"
+
+          echo "work_dir=$WORK_DIR" >> "$GITHUB_OUTPUT"
+
+      - name: Build Docker image
+        run: |
+          docker build "${{ steps.prepare.outputs.work_dir }}" \
+            -t "sample-${{ matrix.language }}-${{ matrix.type }}:ci-test"
+
+      - name: Render email template
+        if: failure()
+        id: email
+        env:
+          EMAIL_SAMPLE: "${{ matrix.language }}/${{ matrix.type }}"
+          EMAIL_WORKFLOW: "${{ github.workflow }}"
+          EMAIL_BRANCH: "${{ github.ref_name }}"
+          EMAIL_COMMIT: "${{ github.sha }}"
+          EMAIL_TRIGGERED_BY: "${{ github.event_name }}"
+          EMAIL_ACTOR: "${{ github.actor }}"
+          EMAIL_RUN_NUMBER: "${{ github.run_number }}"
+          EMAIL_RUN_ID: "${{ github.run_id }}"
+          EMAIL_RUN_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          EMAIL_REPOSITORY: "${{ github.repository }}"
+          EMAIL_SERVER_URL: "${{ github.server_url }}"
+        run: |
+          body=$(envsubst \
+            '${EMAIL_SAMPLE} ${EMAIL_WORKFLOW} ${EMAIL_BRANCH} ${EMAIL_COMMIT}
+             ${EMAIL_TRIGGERED_BY} ${EMAIL_ACTOR} ${EMAIL_RUN_NUMBER} ${EMAIL_RUN_ID}
+             ${EMAIL_RUN_URL} ${EMAIL_REPOSITORY} ${EMAIL_SERVER_URL}' \
+            < .github/email-templates/validate-samples-failure.html)
+          echo "body<<DELIM" >> "$GITHUB_OUTPUT"
+          echo "$body"       >> "$GITHUB_OUTPUT"
+          echo "DELIM"       >> "$GITHUB_OUTPUT"
+
+      - name: Send failure notification
+        if: failure()
+        env:
+          TO: ${{ secrets.MAIL_TO }}
+          SUBJECT: "❌ [Validate Samples] Failed: ${{ matrix.language }}/${{ matrix.type }} — ${{ github.ref_name }}"
+          BODY: ${{ steps.email.outputs.body }}
+          LOGIC_APP_URL: ${{ secrets.LOGIC_APP_URL }}
+          MAIL_CLIENT_ID: ${{ secrets.MAIL_CLIENT_ID }}
+          MAIL_CLIENT_SECRET: ${{ secrets.MAIL_CLIENT_SECRET }}
+          MAIL_TENANT_ID: ${{ secrets.MAIL_TENANT_ID }}
+        run: |
+          if [ -z "$TO" ] || [ -z "$LOGIC_APP_URL" ]; then
+            echo "⚠️  MAIL_TO or LOGIC_APP_URL not configured. Skipping email send."
+            exit 0
+          fi
+
+          # Get Azure AD access token if credentials are provided
+          auth_header=""
+          if [ -n "$MAIL_CLIENT_ID" ] && [ -n "$MAIL_CLIENT_SECRET" ] && [ -n "$MAIL_TENANT_ID" ]; then
+            echo "🔐 Getting Azure AD access token..."
+            response=$(curl -s \
+              --request POST \
+              --header "Content-Type: application/x-www-form-urlencoded" \
+              --data "grant_type=client_credentials&client_id=${MAIL_CLIENT_ID}&client_secret=${MAIL_CLIENT_SECRET}&resource=https://management.core.windows.net" \
+              "https://login.microsoftonline.com/${MAIL_TENANT_ID}/oauth2/token")
+
+            access_token=$(echo "$response" | jq -r '. | select(.access_token) | .access_token')
+            if [ -z "$access_token" ] || [ "$access_token" = "null" ]; then
+              echo "⚠️  Failed to get access token. Skipping email send."
+              exit 0
+            fi
+            echo "✅ Got access token"
+            auth_header="Authorization: Bearer $access_token"
+          fi
+
+          # Write body to temp file to avoid shell argument length limits
+          body_file=$(mktemp)
+          printf '%s' "$BODY" > "$body_file"
+
+          payload=$(jq -n \
+            --arg to      "$TO" \
+            --arg subject "$SUBJECT" \
+            --rawfile body "$body_file" \
+            '{to: $to, subject: $subject, body: $body}')
+          rm -f "$body_file"
+
+          if [ -n "$auth_header" ]; then
+            http_code=$(curl -s -o /tmp/email_response.txt -w "%{http_code}" \
+              --request POST \
+              --header "Content-Type: application/json" \
+              --header "$auth_header" \
+              --data "$payload" \
+              "$LOGIC_APP_URL")
+          else
+            http_code=$(curl -s -o /tmp/email_response.txt -w "%{http_code}" \
+              --request POST \
+              --header "Content-Type: application/json" \
+              --data "$payload" \
+              "$LOGIC_APP_URL")
+          fi
+
+          if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+            echo "✅ Email sent successfully! (HTTP $http_code)"
+          else
+            echo "⚠️  Email send failed with HTTP $http_code"
+            cat /tmp/email_response.txt 2>/dev/null || true
+          fi

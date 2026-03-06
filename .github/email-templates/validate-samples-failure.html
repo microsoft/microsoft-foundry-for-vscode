@@ -1,0 +1,62 @@
+<html>
+
+<body style="font-family: Arial, sans-serif; color: #333; max-width: 700px;">
+
+  <h2 style="color: #d93025;">&#x274C; Hosted Agent Sample Validation Failed</h2>
+
+  <table style="border-collapse: collapse; width: 100%; margin-bottom: 20px;">
+    <tr style="background-color: #f8d7da;">
+      <td style="padding: 8px 12px; font-weight: bold; width: 160px; border: 1px solid #f5c6cb;">Failed Sample</td>
+      <td style="padding: 8px 12px; border: 1px solid #f5c6cb;"><code>${EMAIL_SAMPLE}</code></td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 12px; font-weight: bold; border: 1px solid #dee2e6;">Workflow</td>
+      <td style="padding: 8px 12px; border: 1px solid #dee2e6;">${EMAIL_WORKFLOW}</td>
+    </tr>
+    <tr style="background-color: #f9f9f9;">
+      <td style="padding: 8px 12px; font-weight: bold; border: 1px solid #dee2e6;">Branch</td>
+      <td style="padding: 8px 12px; border: 1px solid #dee2e6;"><code>${EMAIL_BRANCH}</code></td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 12px; font-weight: bold; border: 1px solid #dee2e6;">Commit</td>
+      <td style="padding: 8px 12px; border: 1px solid #dee2e6;"><code>${EMAIL_COMMIT}</code></td>
+    </tr>
+    <tr style="background-color: #f9f9f9;">
+      <td style="padding: 8px 12px; font-weight: bold; border: 1px solid #dee2e6;">Triggered By</td>
+      <td style="padding: 8px 12px; border: 1px solid #dee2e6;">${EMAIL_TRIGGERED_BY}</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 12px; font-weight: bold; border: 1px solid #dee2e6;">Actor</td>
+      <td style="padding: 8px 12px; border: 1px solid #dee2e6;">${EMAIL_ACTOR}</td>
+    </tr>
+    <tr style="background-color: #f9f9f9;">
+      <td style="padding: 8px 12px; font-weight: bold; border: 1px solid #dee2e6;">Run ID</td>
+      <td style="padding: 8px 12px; border: 1px solid #dee2e6;">#${EMAIL_RUN_NUMBER} (${EMAIL_RUN_ID})</td>
+    </tr>
+  </table>
+
+  <h3>What to check</h3>
+  <ul>
+    <li>Open the run log (link below) and expand the failing step.</li>
+    <li>For <strong>dotnet</strong> samples: look for restore/build/publish errors in the Docker build output.</li>
+    <li>For <strong>python</strong> samples: look for <code>pip install</code> errors or a missing
+      <code>requirements.txt</code>.</li>
+    <li>Check whether any placeholder (<code>{{SafeProjectName}}</code>, <code>{{AgentName}}</code>) was not replaced
+      correctly.</li>
+  </ul>
+
+  <p style="margin-top: 24px;">
+    <a href="${EMAIL_RUN_URL}" style="display: inline-block; padding: 10px 20px; background-color: #0078d4; color: white;
+              text-decoration: none; border-radius: 4px; font-weight: bold;">
+      &#x1F517; View Full Run Log
+    </a>
+  </p>
+
+  <hr style="margin-top: 32px; border: none; border-top: 1px solid #dee2e6;" />
+  <p style="font-size: 12px; color: #888;">
+    Sent by GitHub Actions &middot; ${EMAIL_REPOSITORY} &middot; ${EMAIL_SERVER_URL}/${EMAIL_REPOSITORY}
+  </p>
+
+</body>
+
+</html>
