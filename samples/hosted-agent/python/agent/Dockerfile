@@ -12,4 +12,4 @@ RUN if [ -f requirements.txt ]; then \
 
 EXPOSE 8088
 
-CMD ["python", "main1.py"]
+CMD ["python", "main2.py"]
