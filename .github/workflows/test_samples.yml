@@ -187,7 +187,7 @@ jobs:
       - name: Send notification
         env:
           TO: ${{ secrets.MAIL_TO }}
-          SUBJECT: "[${{ steps.email.outputs.overall }}] Hosted Agent Sample Validation (${{ steps.email.outputs.passed }}/${{ steps.email.outputs.total }} Passed)"
+          SUBJECT: "[${{ steps.email.outputs.overall }}] Test Hosted Agent Samples (${{ steps.email.outputs.passed }}/${{ steps.email.outputs.total }} Passed)"
           BODY: ${{ steps.email.outputs.body }}
           LOGIC_APP_URL: ${{ secrets.LOGIC_APP_URL }}
           MAIL_CLIENT_ID: ${{ secrets.MAIL_CLIENT_ID }}
