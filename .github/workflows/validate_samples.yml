@@ -99,11 +99,38 @@ jobs:
 
           docker rm -f "$CONTAINER"
 
-      - name: Render email template
-        if: failure()
+      - name: Save result artifact
+        if: always()
+        run: |
+          mkdir -p /tmp/ci-result
+          echo "${{ job.status }}" > /tmp/ci-result/status.txt
+          echo "${{ matrix.language }}/${{ matrix.type }}" > /tmp/ci-result/sample.txt
+
+      - name: Upload result artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: result-${{ matrix.language }}-${{ matrix.type }}
+          path: /tmp/ci-result/
+
+  notify:
+    name: Send notification
+    needs: [validate]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: result-*
+          path: results/
+
+      - name: Compute summary and render email
         id: email
         env:
-          EMAIL_SAMPLE: "${{ matrix.language }}/${{ matrix.type }}"
           EMAIL_WORKFLOW: "${{ github.workflow }}"
           EMAIL_BRANCH: "${{ github.ref_name }}"
           EMAIL_COMMIT: "${{ github.sha }}"
@@ -115,20 +142,53 @@ jobs:
           EMAIL_REPOSITORY: "${{ github.repository }}"
           EMAIL_SERVER_URL: "${{ github.server_url }}"
         run: |
+          total=0
+          passed=0
+          rows=""
+          for dir in results/result-*/; do
+            status=$(cat "$dir/status.txt" 2>/dev/null || echo "unknown")
+            sample=$(cat "$dir/sample.txt" 2>/dev/null || echo "unknown")
+            total=$((total + 1))
+            if [ "$status" = "success" ]; then
+              passed=$((passed + 1))
+              icon="&#x2705;"
+              row_style=""
+            else
+              icon="&#x274C;"
+              row_style=' style="background-color:#f8d7da;"'
+            fi
+            rows="${rows}<tr${row_style}><td style=\"padding:8px 12px;border:1px solid #dee2e6;\"><code>${sample}</code></td><td style=\"padding:8px 12px;border:1px solid #dee2e6;\">${icon} ${status}</td></tr>"
+          done
+          failed=$((total - passed))
+          if [ "$failed" -eq 0 ]; then
+            overall="PASSED"
+            header_color="#137333"
+          else
+            overall="FAILED"
+            header_color="#d93025"
+          fi
+          export EMAIL_OVERALL="$overall"
+          export EMAIL_PASSED="$passed"
+          export EMAIL_TOTAL="$total"
+          export EMAIL_ROWS="$rows"
+          export EMAIL_HEADER_COLOR="$header_color"
           body=$(envsubst \
-            '${EMAIL_SAMPLE} ${EMAIL_WORKFLOW} ${EMAIL_BRANCH} ${EMAIL_COMMIT}
+            '${EMAIL_OVERALL} ${EMAIL_PASSED} ${EMAIL_TOTAL} ${EMAIL_ROWS} ${EMAIL_HEADER_COLOR}
+             ${EMAIL_WORKFLOW} ${EMAIL_BRANCH} ${EMAIL_COMMIT}
              ${EMAIL_TRIGGERED_BY} ${EMAIL_ACTOR} ${EMAIL_RUN_NUMBER} ${EMAIL_RUN_ID}
              ${EMAIL_RUN_URL} ${EMAIL_REPOSITORY} ${EMAIL_SERVER_URL}' \
             < .github/email-templates/validate-samples-failure.html)
-          echo "body<<DELIM" >> "$GITHUB_OUTPUT"
-          echo "$body"       >> "$GITHUB_OUTPUT"
-          echo "DELIM"       >> "$GITHUB_OUTPUT"
+          echo "overall=$overall" >> "$GITHUB_OUTPUT"
+          echo "passed=$passed"   >> "$GITHUB_OUTPUT"
+          echo "total=$total"     >> "$GITHUB_OUTPUT"
+          echo "body<<DELIM"      >> "$GITHUB_OUTPUT"
+          echo "$body"            >> "$GITHUB_OUTPUT"
+          echo "DELIM"            >> "$GITHUB_OUTPUT"
 
-      - name: Send failure notification
-        if: failure()
+      - name: Send notification
         env:
           TO: ${{ secrets.MAIL_TO }}
-          SUBJECT: "❌ [Validate Samples] Failed: ${{ matrix.language }}/${{ matrix.type }} — ${{ github.ref_name }}"
+          SUBJECT: "[${{ steps.email.outputs.overall }}] Hosted Agent Sample Validation (${{ steps.email.outputs.passed }}/${{ steps.email.outputs.total }} Passed)"
           BODY: ${{ steps.email.outputs.body }}
           LOGIC_APP_URL: ${{ secrets.LOGIC_APP_URL }}
           MAIL_CLIENT_ID: ${{ secrets.MAIL_CLIENT_ID }}
@@ -140,7 +200,6 @@ jobs:
             exit 0
           fi
 
-          # Get Azure AD access token if credentials are provided
           auth_header=""
           if [ -n "$MAIL_CLIENT_ID" ] && [ -n "$MAIL_CLIENT_SECRET" ] && [ -n "$MAIL_TENANT_ID" ]; then
             echo "🔐 Getting Azure AD access token..."
@@ -149,7 +208,6 @@ jobs:
               --header "Content-Type: application/x-www-form-urlencoded" \
               --data "grant_type=client_credentials&client_id=${MAIL_CLIENT_ID}&client_secret=${MAIL_CLIENT_SECRET}&resource=https://management.core.windows.net" \
               "https://login.microsoftonline.com/${MAIL_TENANT_ID}/oauth2/token")
-
             access_token=$(echo "$response" | jq -r '. | select(.access_token) | .access_token')
             if [ -z "$access_token" ] || [ "$access_token" = "null" ]; then
               echo "⚠️  Failed to get access token. Skipping email send."
@@ -159,10 +217,8 @@ jobs:
             auth_header="Authorization: Bearer $access_token"
           fi
 
-          # Write body to temp file to avoid shell argument length limits
           body_file=$(mktemp)
           printf '%s' "$BODY" > "$body_file"
-
           payload=$(jq -n \
             --arg to      "$TO" \
             --arg subject "$SUBJECT" \

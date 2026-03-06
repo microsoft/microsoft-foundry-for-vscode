@@ -1,16 +1,27 @@
 <html>
 
-<body style="font-family: Arial, sans-serif; color: #333; max-width: 700px;">
+<body style="font-family: Arial, sans-serif; color: #333; max-width: 720px;">
 
-  <h2 style="color: #d93025;">&#x274C; Hosted Agent Sample Validation Failed</h2>
+  <h2 style="color: ${EMAIL_HEADER_COLOR};">Hosted Agent Sample Validation &#x2014; [${EMAIL_OVERALL}]</h2>
+  <p style="font-size: 15px;"><strong>${EMAIL_PASSED} / ${EMAIL_TOTAL}</strong> samples passed</p>
 
-  <table style="border-collapse: collapse; width: 100%; margin-bottom: 20px;">
-    <tr style="background-color: #f8d7da;">
-      <td style="padding: 8px 12px; font-weight: bold; width: 160px; border: 1px solid #f5c6cb;">Failed Sample</td>
-      <td style="padding: 8px 12px; border: 1px solid #f5c6cb;"><code>${EMAIL_SAMPLE}</code></td>
-    </tr>
+  <h3 style="margin-top: 20px;">Sample Results</h3>
+  <table style="border-collapse: collapse; width: 100%; margin-bottom: 24px;">
+    <thead>
+      <tr style="background-color: #f1f3f4;">
+        <th style="padding: 8px 12px; text-align: left; border: 1px solid #dee2e6;">Sample</th>
+        <th style="padding: 8px 12px; text-align: left; border: 1px solid #dee2e6;">Result</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${EMAIL_ROWS}
+    </tbody>
+  </table>
+
+  <h3>Run Details</h3>
+  <table style="border-collapse: collapse; width: 100%; margin-bottom: 24px;">
     <tr>
-      <td style="padding: 8px 12px; font-weight: bold; border: 1px solid #dee2e6;">Workflow</td>
+      <td style="padding: 8px 12px; font-weight: bold; width: 160px; border: 1px solid #dee2e6;">Workflow</td>
       <td style="padding: 8px 12px; border: 1px solid #dee2e6;">${EMAIL_WORKFLOW}</td>
     </tr>
     <tr style="background-color: #f9f9f9;">
@@ -34,16 +45,6 @@
       <td style="padding: 8px 12px; border: 1px solid #dee2e6;">#${EMAIL_RUN_NUMBER} (${EMAIL_RUN_ID})</td>
     </tr>
   </table>
-
-  <h3>What to check</h3>
-  <ul>
-    <li>Open the run log (link below) and expand the failing step.</li>
-    <li>For <strong>dotnet</strong> samples: look for restore/build/publish errors in the Docker build output.</li>
-    <li>For <strong>python</strong> samples: look for <code>pip install</code> errors or a missing
-      <code>requirements.txt</code>.</li>
-    <li>Check whether any placeholder (<code>{{SafeProjectName}}</code>, <code>{{AgentName}}</code>) was not replaced
-      correctly.</li>
-  </ul>
 
   <p style="margin-top: 24px;">
     <a href="${EMAIL_RUN_URL}" style="display: inline-block; padding: 10px 20px; background-color: #0078d4; color: white;
