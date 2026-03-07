@@ -34,6 +34,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Stage sync script
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp .github/scripts/sync_agent_framework_samples.py "$RUNNER_TEMP/sync_agent_framework_samples.py"
+
       - name: Prepare target branch
         id: prepare
         shell: bash
@@ -60,7 +66,7 @@ jobs:
 
       - name: Sync tracked sample files
         if: steps.prepare.outputs.branch_exists == 'true'
-        run: python .github/scripts/sync_agent_framework_samples.py
+        run: python "$RUNNER_TEMP/sync_agent_framework_samples.py"
 
       - name: Detect sample changes
         if: steps.prepare.outputs.branch_exists == 'true'
