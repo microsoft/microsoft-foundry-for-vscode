@@ -57,7 +57,7 @@ internal static class Program
         // Create credential - use ManagedIdentityCredential if MSI_ENDPOINT exists, otherwise DefaultAzureCredential
         TokenCredential credential = string.IsNullOrEmpty(Environment.GetEnvironmentVariable("MSI_ENDPOINT"))
             ? new DefaultAzureCredential()
-            : new ManagedIdentityCredential();
+            : new ManagedIdentityCredential(new ManagedIdentityCredentialOptions());
 
         // Create separate PersistentAgentsClient for each agent
         var writerClient = new PersistentAgentsClient(endpoint, credential);
