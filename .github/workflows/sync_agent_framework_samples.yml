@@ -191,10 +191,10 @@ jobs:
             This workflow only applies labels that already exist in the repository.
           labels: ${{ steps.labels.outputs.labels }}
           add-paths: |
-            samples/hosted-agent/dotnet/agent/**/*.cs
-            samples/hosted-agent/dotnet/agent/**/*.csproj
-            samples/hosted-agent/dotnet/workflow/**/*.cs
-            samples/hosted-agent/dotnet/workflow/**/*.csproj
+            samples/hosted-agent/dotnet/agent/*.cs
+            samples/hosted-agent/dotnet/agent/*.csproj
+            samples/hosted-agent/dotnet/workflow/*.cs
+            samples/hosted-agent/dotnet/workflow/*.csproj
 
       - name: Report PR result
         if: steps.prepare.outputs.branch_exists == 'true' && steps.diff.outputs.has_changes == 'true'
