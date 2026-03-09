@@ -144,12 +144,20 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
+      - name: Generate PR branch name
+        if: steps.prepare.outputs.branch_exists == 'true' && steps.diff.outputs.has_changes == 'true'
+        id: branch
+        shell: bash
+        run: |
+          date_suffix=$(date -u +%Y%m%d)
+          echo "name=ci/sync-af_hosted-agent-samples-${{ matrix.base_branch }}-${date_suffix}" >> "$GITHUB_OUTPUT"
+
       - name: Create draft pull request
         if: steps.prepare.outputs.branch_exists == 'true' && steps.diff.outputs.has_changes == 'true'
         id: cpr
         uses: peter-evans/create-pull-request@v8
         with:
-          branch: ci/sync-agent-framework-hosted-agent-samples-${{ matrix.base_branch }}
+          branch: ${{ steps.branch.outputs.name }}
           base: ${{ matrix.base_branch }}
           delete-branch: true
           draft: always-true
