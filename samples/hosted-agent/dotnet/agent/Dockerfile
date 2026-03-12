@@ -5,7 +5,7 @@ WORKDIR /src
 # Copy files from the current directory on the host to the working directory in the container
 COPY . .
 
-RUN dotnet restore {{SafeProjectName}}.csproj
+RUN dotnet restore
 RUN dotnet build -c Release --no-restore
 RUN dotnet publish -c Release --no-build -o /app
 
