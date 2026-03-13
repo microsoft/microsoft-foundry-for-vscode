@@ -7,8 +7,8 @@
     <EnablePreviewFeatures>true</EnablePreviewFeatures>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Azure.AI.AgentServer.AgentFramework" Version="1.0.0-beta.9" />
-    <PackageReference Include="Microsoft.Agents.AI.AzureAI" Version="1.0.0-rc1" />
+    <PackageReference Include="Azure.AI.AgentServer.AgentFramework" Version="1.0.0-beta.10" />
+    <PackageReference Include="Microsoft.Agents.AI.AzureAI" Version="1.0.0-rc3" />
 
 	  <PackageReference Include="Azure.Identity" Version="1.17.1" />
   </ItemGroup>
