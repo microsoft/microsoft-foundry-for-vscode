@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "1.0",
-  "lastUpdated": "2026-02-28T10:00:00Z",
   "channels": {
     "stable": {
       "branch": "stable",
-      "sampleVersion": "v1.0.0",
+      "downloadUrl": "https://github.com/microsoft/ai-foundry-for-vscode/releases/download/v1.2.0/{{lang}}.zip",
       "lang": ["dotnet", "python"],
-      "downloadUrl": "https://github.com/microsoft/ai-foundry-for-vscode/releases/download/v1.0.0/{{lang}}.zip",
-      "lastUpdated": "2026-02-28T10:00:00Z"
+      "lastUpdated": "2026-03-12T10:00:00Z",
+      "sampleVersion": "v1.2.0"
     }
-  }
+  },
+  "lastUpdated": "2026-03-12T10:00:00Z",
+  "schemaVersion": "1.0"
 }
