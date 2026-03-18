@@ -1,0 +1,5 @@
+azure-ai-agentserver-langgraph==1.0.0b16
+azure-ai-agentserver-core==1.0.0b16
+azure-identity
+debugpy
+dotenv
