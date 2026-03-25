@@ -4,11 +4,11 @@ This folder contains sample templates for building code-based **hosted agents** 
 
 ## Available Templates
 
-| Template | Python | .NET | Description |
-|----------|--------|------|-------------|
-| **Agent** | `python/agent` | `dotnet/agent` | A single agent with local tool execution (Seattle Hotel search demo) |
-| **Workflow** | `python/workflow` | `dotnet/workflow` | A multi-agent workflow with Writer and Reviewer agents |
-| **Minimal** | `python/minimal` | `dotnet/minimal` | A bare-bones Dockerfile for custom implementations |
+| Template     | Description                                                          | Python (Agent Framework)          | Python (LangGraph)       | .NET              |
+| ------------ | -------------------------------------------------------------------- | --------------------------------- | ------------------------ | ----------------- |
+| **Agent**    | A single agent with local tool execution (Seattle Hotel search demo) | `python/agent-framework/agent`    | `python/langgraph/agent` | `dotnet/agent`    |
+| **Workflow** | A multi-agent workflow with Writer and Reviewer agents               | `python/agent-framework/workflow` | —                        | `dotnet/workflow` |
+| **Minimal**  | A bare-bones Dockerfile for custom implementations                   | `python/minimal`                  | —                        | `dotnet/minimal`  |
 
 ## Placeholder Values
 
@@ -28,6 +28,7 @@ For the best experience creating hosted agents, we recommend using the **Microso
 **Install the extension:** [Microsoft Foundry for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=ms-windows-ai-studio.windows-ai-studio)
 
 With the extension you can:
+
 - Scaffold a new hosted agent project with your settings pre-filled
 - Deploy directly to Microsoft Foundry from VS Code
 - Test and debug agents locally before deployment
@@ -38,8 +39,11 @@ With the extension you can:
 hosted-agent/
 ├── version-manifest.json      # Version and release metadata
 ├── python/
-│   ├── agent/                 # Single agent with local tool
-│   ├── workflow/              # Multi-agent workflow
+│   ├── agent-framework/
+│   │   ├── agent/             # Single agent with local tool (Agent Framework)
+│   │   └── workflow/          # Multi-agent workflow (Agent Framework)
+│   ├── langgraph/
+│   │   └── agent/             # Single agent built with LangGraph
 │   └── minimal/               # Minimal Dockerfile only
 └── dotnet/
     ├── agent/                 # Single agent with local tool
