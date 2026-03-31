@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/microsoft/AgentSchema/refs/heads/main/schemas/v1.0/AgentManifest.yaml
+
+name: writer-reviewer-workflow
+description: >
+  A multi-agent workflow featuring a Writer and Reviewer that collaborate
+  to create and refine content.
+metadata:
+  authors:
+    - Microsoft
+  tags:
+    - Azure AI AgentServer
+    - Microsoft Agent Framework
+    - Multi-Agent Workflow
+    - Writer-Reviewer
+    - Content Creation
+template:
+  name: writer-reviewer-workflow
+  kind: hosted
+  protocols:
+    - protocol: responses
+  environment_variables:
+    - name: AZURE_AI_PROJECT_ENDPOINT
+      value: ${AZURE_AI_PROJECT_ENDPOINT}
+    - name: AZURE_AI_MODEL_DEPLOYMENT_NAME
+      value: "{{chat}}"
+resources:
+  - kind: model
+    id: gpt-4.1-mini
+    name: chat

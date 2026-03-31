@@ -54,7 +54,7 @@ Before running this sample, ensure you have:
 
 ### Environment Variables
 
-Set the following environment variables (matching `agent.yaml`):
+Set the following environment variables (matching `agent.manifest.yaml`):
 
 - `AZURE_AI_PROJECT_ENDPOINT` - Your Azure AI Foundry project endpoint URL (required)
 - `AZURE_AI_MODEL_DEPLOYMENT_NAME` - The deployment name for your chat model (defaults to `gpt-4.1-mini`)
@@ -130,7 +130,7 @@ The agent will use the `GetAvailableHotels` tool to search for available hotels 
 
 **Preparation (required)**
 
-Please check the environment_variables section in [agent.yaml](agent.yaml) and ensure the variables there are set in your target Microsoft Foundry Project.
+Please check the environment_variables section in [agent.manifest.yaml](agent.manifest.yaml) and ensure the variables there are set in your target Microsoft Foundry Project.
 
 To deploy the hosted agent:
 

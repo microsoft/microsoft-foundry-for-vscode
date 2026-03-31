@@ -1,0 +1,48 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{5D20AA90-6969-D8BD-9DCD-8634F4692FDA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "hosted-agent", "hosted-agent", "{60F4BAE3-0B39-114A-789B-154568CC8469}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotnet", "dotnet", "{9728E47D-1F74-1B6A-6705-8C3B4DEBF180}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "agent", "agent", "{C2A9B3ED-06BA-B9F7-1431-1DBFE4491643}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "{{SafeProjectName}}", "samples\hosted-agent\dotnet\agent\{{SafeProjectName}}.csproj", "{6A24E213-A171-DB16-35D3-95E47FA42084}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflow", "workflow", "{1990761E-82EB-C469-01ED-08CD01E549BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "{{SafeProjectName}}", "samples\hosted-agent\dotnet\workflow\{{SafeProjectName}}.csproj", "{BDA3CEC0-231D-A754-A9E5-95A6C9CEFE17}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A24E213-A171-DB16-35D3-95E47FA42084}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A24E213-A171-DB16-35D3-95E47FA42084}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A24E213-A171-DB16-35D3-95E47FA42084}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A24E213-A171-DB16-35D3-95E47FA42084}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDA3CEC0-231D-A754-A9E5-95A6C9CEFE17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDA3CEC0-231D-A754-A9E5-95A6C9CEFE17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDA3CEC0-231D-A754-A9E5-95A6C9CEFE17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDA3CEC0-231D-A754-A9E5-95A6C9CEFE17}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{60F4BAE3-0B39-114A-789B-154568CC8469} = {5D20AA90-6969-D8BD-9DCD-8634F4692FDA}
+		{9728E47D-1F74-1B6A-6705-8C3B4DEBF180} = {60F4BAE3-0B39-114A-789B-154568CC8469}
+		{C2A9B3ED-06BA-B9F7-1431-1DBFE4491643} = {9728E47D-1F74-1B6A-6705-8C3B4DEBF180}
+		{6A24E213-A171-DB16-35D3-95E47FA42084} = {C2A9B3ED-06BA-B9F7-1431-1DBFE4491643}
+		{1990761E-82EB-C469-01ED-08CD01E549BB} = {9728E47D-1F74-1B6A-6705-8C3B4DEBF180}
+		{BDA3CEC0-231D-A754-A9E5-95A6C9CEFE17} = {1990761E-82EB-C469-01ED-08CD01E549BB}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F19F2A64-CB37-405B-AD44-85942D444E09}
+	EndGlobalSection
+EndGlobal

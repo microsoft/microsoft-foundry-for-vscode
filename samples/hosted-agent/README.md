@@ -19,7 +19,7 @@ These samples are **project templates** and contain placeholder values that must
 - `{{AZURE_AI_MODEL_DEPLOYMENT_NAME}}` — Your deployed model name (e.g., `gpt-4o`, `gpt-4.1-mini`)
 - `{{SafeProjectName}}` — (.NET) Your project name for the `.csproj` file
 
-These placeholders appear in `agent.yaml`, source files, and project configuration files throughout the templates.
+These placeholders appear in `agent.manifest.yaml`, source files, and project configuration files throughout the templates.
 
 ## Recommended: Use the Microsoft Foundry VS Code Extension
 

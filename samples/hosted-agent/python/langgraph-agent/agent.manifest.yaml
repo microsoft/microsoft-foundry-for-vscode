@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/microsoft/AgentSchema/refs/heads/main/schemas/v1.0/AgentManifest.yaml
+
+name: langgraph-hotel-agent
+description: >
+  A travel assistant agent that helps users find hotels in Seattle.
+  Demonstrates LangGraph agent with local Python tool execution.
+metadata:
+  authors:
+    - Microsoft
+  tags:
+    - Azure AI AgentServer
+    - LangGraph
+    - Local Tools
+    - Travel Assistant
+    - Hotel Search
+template:
+  name: langgraph-hotel-agent
+  kind: hosted
+  protocols:
+    - protocol: responses
+  environment_variables:
+    - name: AZURE_AI_PROJECT_ENDPOINT
+      value: ${AZURE_AI_PROJECT_ENDPOINT}
+    - name: AZURE_AI_MODEL_DEPLOYMENT_NAME
+      value: "{{chat}}"
+resources:
+  - kind: model
+    id: gpt-4.1-mini
+    name: chat

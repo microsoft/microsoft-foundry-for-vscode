@@ -131,7 +131,7 @@ The Writer agent will generate content based on your prompt, and the Reviewer ag
 
 **Preparation (required)**
 
-Please check the environment_variables section in [agent.yaml](agent.yaml) and ensure the variables there are set in your target Microsoft Foundry Project.
+Please check the environment_variables section in [agent.manifest.yaml](agent.manifest.yaml) and ensure the variables there are set in your target Microsoft Foundry Project.
 
 To deploy the hosted agent:
 
