@@ -15,8 +15,8 @@ This folder contains sample templates for building code-based **hosted agents** 
 These samples are **project templates** and contain placeholder values that must be replaced before use:
 
 - `{{AgentName}}` — Your agent's name
-- `{{PROJECT_ENDPOINT}}` — Your Microsoft Foundry project endpoint (e.g., `https://<project>.services.ai.azure.com`)
-- `{{MODEL_DEPLOYMENT_NAME}}` — Your deployed model name (e.g., `gpt-4o`, `gpt-4.1-mini`)
+- `{{AZURE_AI_PROJECT_ENDPOINT}}` — Your Microsoft Foundry project endpoint (e.g., `https://<project>.services.ai.azure.com`)
+- `{{AZURE_AI_MODEL_DEPLOYMENT_NAME}}` — Your deployed model name (e.g., `gpt-4o`, `gpt-4.1-mini`)
 - `{{SafeProjectName}}` — (.NET) Your project name for the `.csproj` file
 
 These placeholders appear in `agent.yaml`, source files, and project configuration files throughout the templates.

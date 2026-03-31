@@ -20,11 +20,11 @@ from azure.identity.aio import DefaultAzureCredential
 
 # Configure these for your Foundry project
 # Read the explicit variables present in the .env file
-PROJECT_ENDPOINT = os.getenv(
-    "PROJECT_ENDPOINT"
+project_endpoint = os.getenv(
+    "AZURE_AI_PROJECT_ENDPOINT"
 )  # e.g., "https://<project>.services.ai.azure.com"
-MODEL_DEPLOYMENT_NAME = os.getenv(
-    "MODEL_DEPLOYMENT_NAME", "gpt-4.1-mini"
+model_deployment_name = os.getenv(
+    "AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-4.1-mini"
 )  # Your model deployment name e.g., "gpt-4.1-mini"
 
 
@@ -120,8 +120,8 @@ async def main():
     async with (
         DefaultAzureCredential() as credential,
         AzureAIAgentClient(
-            project_endpoint=PROJECT_ENDPOINT,
-            model_deployment_name=MODEL_DEPLOYMENT_NAME,
+            project_endpoint=project_endpoint,
+            model_deployment_name=model_deployment_name,
             credential=credential,
         ) as client,
     ):

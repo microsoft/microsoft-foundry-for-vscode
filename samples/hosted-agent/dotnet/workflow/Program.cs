@@ -43,13 +43,13 @@ internal static class Program
             .Build();
 
         var endpoint =
-            configuration["PROJECT_ENDPOINT"]
+            configuration["AZURE_AI_PROJECT_ENDPOINT"]
             ?? throw new InvalidOperationException(
-                "PROJECT_ENDPOINT is required. Set it in appsettings.Development.json for local development or as PROJECT_ENDPOINT environment variable for production");
+                "AZURE_AI_PROJECT_ENDPOINT is required. Set it in appsettings.Development.json for local development or as AZURE_AI_PROJECT_ENDPOINT environment variable for production");
         var deployment =
-            configuration["MODEL_DEPLOYMENT_NAME"]
+            configuration["AZURE_AI_MODEL_DEPLOYMENT_NAME"]
             ?? throw new InvalidOperationException(
-                "MODEL_DEPLOYMENT_NAME is required. Set it in appsettings.Development.json for local development or as MODEL_DEPLOYMENT_NAME environment variable for containers");
+                "AZURE_AI_MODEL_DEPLOYMENT_NAME is required. Set it in appsettings.Development.json for local development or as AZURE_AI_MODEL_DEPLOYMENT_NAME environment variable for containers");
 
         Console.WriteLine($"Using Azure AI endpoint: {endpoint}");
         Console.WriteLine($"Using model deployment: {deployment}");

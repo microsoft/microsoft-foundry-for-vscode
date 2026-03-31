@@ -13,10 +13,10 @@ load_dotenv(override=True)
 # Configure these for your Foundry project
 # Read the explicit variables present in the .env file
 PROJECT_ENDPOINT = os.getenv(
-    "PROJECT_ENDPOINT"
+    "AZURE_AI_PROJECT_ENDPOINT"
 )  # e.g., "https://<project>.services.ai.azure.com"
 MODEL_DEPLOYMENT_NAME = os.getenv(
-    "MODEL_DEPLOYMENT_NAME", "gpt-4.1-mini"
+    "AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-4.1-mini"
 )  # Your model deployment name e.g., "gpt-4.1-mini"
 
 
@@ -78,8 +78,8 @@ async def main() -> None:
         python main.py          # Run in server mode
 
     Environment variables required:
-    - PROJECT_ENDPOINT: Your Microsoft Foundry project endpoint
-    - MODEL_DEPLOYMENT_NAME: Your Microsoft Foundry model deployment name
+    - AZURE_AI_PROJECT_ENDPOINT: Your Microsoft Foundry project endpoint
+    - AZURE_AI_MODEL_DEPLOYMENT_NAME: Your Microsoft Foundry model deployment name
     """
 
     async with create_agents() as (writer, reviewer):

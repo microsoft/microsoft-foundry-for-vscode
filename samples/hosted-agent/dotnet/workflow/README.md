@@ -66,15 +66,15 @@ If you created your hosted agent project using the Microsoft Foundry VS Code ext
 
 ```powershell
 # Replace with your actual values
-$env:PROJECT_ENDPOINT="https://<your-resource>.services.ai.azure.com/api/projects/<your-project>"
-$env:MODEL_DEPLOYMENT_NAME="gpt-4.1-mini"
+$env:AZURE_AI_PROJECT_ENDPOINT="https://<your-resource>.services.ai.azure.com/api/projects/<your-project>"
+$env:AZURE_AI_MODEL_DEPLOYMENT_NAME="gpt-4.1-mini"
 ```
 
 **Bash:**
 
 ```bash
-export PROJECT_ENDPOINT="https://<your-resource>.services.ai.azure.com/api/projects/<your-project>"
-export MODEL_DEPLOYMENT_NAME="gpt-4.1-mini"
+export AZURE_AI_PROJECT_ENDPOINT="https://<your-resource>.services.ai.azure.com/api/projects/<your-project>"
+export AZURE_AI_MODEL_DEPLOYMENT_NAME="gpt-4.1-mini"
 ```
 
 ### Running the Sample
