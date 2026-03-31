@@ -1,6 +1,9 @@
-azure-ai-agentserver-core==1.0.0b16
-azure-identity
-azure-ai-projects
-openai
-python-dotenv
-debugpy
+github-copilot-sdk>=0.1.29
+starlette<1.0.0
+uvicorn[standard]
+python-dotenv==1.1.1
+azure-monitor-opentelemetry>=1.6.0
+opentelemetry-sdk<1.39
+azure-ai-agentserver-core>=1.0.0b14
+aiohttp
+cachetools

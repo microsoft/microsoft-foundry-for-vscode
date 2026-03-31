@@ -1,30 +1,25 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/microsoft/AgentSchema/refs/heads/main/schemas/v1.0/AgentManifest.yaml
-
 name: copilot-skills-agent
 description: >
-  A code-based hosted agent using FoundryCBAgent from the Azure AI AgentServer
-  Core SDK. Demonstrates direct control over streaming and non-streaming
-  responses with the OpenAI Responses API.
+  A skills-powered agent that uses Copilot skill directories.
 metadata:
-  authors:
-    - Microsoft
+  example:
+    - role: user
+      content: |-
+        My name is Jeff, greet me!
   tags:
-    - Azure AI AgentServer
-    - Copilot Skills
-    - FoundryCBAgent
-    - Code-Based Agent
-    - Streaming Responses
+    - AI Agent Hosting
+    - Skills Agent
+    - Copilot SDK
+  authors:
+    - johmil
 template:
   name: copilot-skills-agent
   kind: hosted
   protocols:
     - protocol: responses
+      version: v1
   environment_variables:
     - name: AZURE_AI_PROJECT_ENDPOINT
       value: ${AZURE_AI_PROJECT_ENDPOINT}
-    - name: AZURE_AI_MODEL_DEPLOYMENT_NAME
-      value: "{{chat}}"
-resources:
-  - kind: model
-    id: gpt-4.1-mini
-    name: chat
+    - name: GITHUB_TOKEN
+      value: ${GITHUB_TOKEN}
