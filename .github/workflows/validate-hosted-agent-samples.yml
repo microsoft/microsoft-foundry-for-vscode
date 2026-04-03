@@ -10,24 +10,20 @@ on:
 
 jobs:
   validate:
-    name: Validate ${{ matrix.language }}/${{ matrix.type }}
+    name: Validate ${{ matrix.branch }} — ${{ matrix.language }}/${{ matrix.type }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false # Run all matrix jobs even if one fails
       matrix:
-        include:
-          - language: dotnet
-            type: agent
-          - language: dotnet
-            type: workflow
-          - language: python
-            type: agent
-          - language: python
-            type: workflow
+        language: [dotnet, python]
+        type: [agent, workflow]
+        branch: [dev, main, pre-release, stable]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.branch }}
 
       - name: Prepare sample directory
         id: prepare
@@ -102,13 +98,13 @@ jobs:
         run: |
           mkdir -p /tmp/ci-result
           echo "${{ job.status }}" > /tmp/ci-result/status.txt
-          echo "${{ matrix.language }}/${{ matrix.type }}" > /tmp/ci-result/sample.txt
+          echo "${{ matrix.branch }}/${{ matrix.language }}/${{ matrix.type }}" > /tmp/ci-result/sample.txt
 
       - name: Upload result artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: result-${{ matrix.language }}-${{ matrix.type }}
+          name: result-${{ matrix.branch }}-${{ matrix.language }}-${{ matrix.type }}
           path: /tmp/ci-result/
 
   notify:
