@@ -5,9 +5,7 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Text;
-using System.ClientModel.Primitives;
 using Azure.AI.AgentServer.AgentFramework.Extensions;
-using Azure.AI.OpenAI;
 using Azure.AI.Projects;
 using Azure.Identity;
 using Microsoft.Agents.AI;
@@ -17,8 +15,10 @@ using Microsoft.Extensions.AI;
 var endpoint = Environment.GetEnvironmentVariable("AZURE_AI_PROJECT_ENDPOINT")
     ?? throw new InvalidOperationException("AZURE_AI_PROJECT_ENDPOINT is not set.");
 var deploymentName = Environment.GetEnvironmentVariable("MODEL_DEPLOYMENT_NAME") ?? "gpt-4.1-mini";
+
 Console.WriteLine($"Project Endpoint: {endpoint}");
 Console.WriteLine($"Model Deployment: {deploymentName}");
+
 // Simulated hotel data for Seattle
 var seattleHotels = new[]
 {
@@ -92,26 +92,10 @@ string GetAvailableHotels(
 var credential = new DefaultAzureCredential();
 AIProjectClient projectClient = new AIProjectClient(new Uri(endpoint), credential);
 
-// Get the OpenAI connection from the project
-ClientConnection connection = projectClient.GetConnection(typeof(AzureOpenAIClient).FullName!);
-
-if (!connection.TryGetLocatorAsUri(out Uri? openAiEndpoint) || openAiEndpoint is null)
-{
-    throw new InvalidOperationException("Failed to get OpenAI endpoint from project connection.");
-}
-openAiEndpoint = new Uri($"https://{openAiEndpoint.Host}");
-Console.WriteLine($"OpenAI Endpoint: {openAiEndpoint}");
-
-var chatClient = new AzureOpenAIClient(openAiEndpoint, credential)
-    .GetChatClient(deploymentName)
-    .AsIChatClient()
-    .AsBuilder()
-    .UseOpenTelemetry(sourceName: "Agents", configure: cfg => cfg.EnableSensitiveData = false)
-    .Build();
-
-var agent = new ChatClientAgent(chatClient,
-    name: "SeattleHotelAgent",
-    instructions: """
+var agent = (await projectClient.CreateAIAgentAsync(
+        model: deploymentName,
+        name: "SeattleHotelAgent",
+        instructions: """
         You are a helpful travel assistant specializing in finding hotels in Seattle, Washington.
 
         When a user asks about hotels in Seattle:
@@ -124,10 +108,14 @@ var agent = new ChatClientAgent(chatClient,
         Be conversational and helpful. If users ask about things outside of Seattle hotels,
         politely let them know you specialize in Seattle hotel recommendations.
         """,
-    tools: [AIFunctionFactory.Create(GetAvailableHotels)])
+        tools: [AIFunctionFactory.Create(GetAvailableHotels)],
+        clientFactory: client => client.AsBuilder()
+            .UseOpenTelemetry(sourceName: "Agents", configure: cfg => cfg.EnableSensitiveData = false)
+            .Build()
+    ))
     .AsBuilder()
-    .UseOpenTelemetry(sourceName: "Agents", configure: cfg => cfg.EnableSensitiveData = false)
-    .Build();
+        .UseOpenTelemetry(sourceName: "Agents", configure: cfg => cfg.EnableSensitiveData = false)
+        .Build();
 
 Console.WriteLine("Seattle Hotel Agent Server running on http://localhost:8088");
 await agent.RunAIAgentAsync(telemetrySourceName: "Agents");

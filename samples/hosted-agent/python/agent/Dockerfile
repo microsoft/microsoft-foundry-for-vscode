@@ -1,11 +1,12 @@
-FROM python:3.12-slim
+FROM python:3.14-slim
 
 WORKDIR /app
 
 COPY ./ .
 
-RUN if [ -f requirements.txt ]; then \
-        pip install --no-cache-dir -r requirements.txt; \
+RUN pip install --upgrade pip && \
+    if [ -f requirements.txt ]; then \
+        pip install -r requirements.txt; \
     else \
         echo "No requirements.txt found"; \
     fi
