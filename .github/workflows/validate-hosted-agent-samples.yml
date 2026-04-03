@@ -15,9 +15,9 @@ jobs:
     strategy:
       fail-fast: false # Run all matrix jobs even if one fails
       matrix:
+        branch: [dev, main, pre-release, stable]
         language: [dotnet, python]
         type: [agent, workflow]
-        branch: [dev, main, pre-release, stable]
 
     steps:
       - name: Checkout code
@@ -149,9 +149,9 @@ jobs:
               row_style=""
             else
               icon="&#x274C;"
-              row_style=' style="background-color:#f8d7da;"'
+              row_style=' style="background-color:#fff8f8;"'
             fi
-            rows="${rows}<tr${row_style}><td style=\"padding:8px 12px;border:1px solid #dee2e6;\"><code>${sample}</code></td><td style=\"padding:8px 12px;border:1px solid #dee2e6;\">${icon} ${status}</td></tr>"
+            rows="${rows}<tr${row_style}><td style=\"padding:8px 12px;border-bottom:1px solid #eeeeee;font-size:13px;color:#111111;\"><code style=\"background:#f5f5f5;padding:1px 6px;border-radius:4px;font-size:12px;\">${sample}</code></td><td style=\"padding:8px 12px;border-bottom:1px solid #eeeeee;font-size:13px;color:#111111;white-space:nowrap;\">${icon} ${status}</td></tr>"
           done
           failed=$((total - passed))
           if [ "$failed" -eq 0 ]; then
