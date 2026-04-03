@@ -5,9 +5,8 @@ WORKDIR /src
 # Copy files from the current directory on the host to the working directory in the container
 COPY . .
 
-RUN dotnet restore
-RUN dotnet build -c Release --no-restore
-RUN dotnet publish -c Release --no-build -o /app
+RUN dotnet restore {{SafeProjectName}}.csproj
+RUN dotnet publish -c Release --no-restore -o /app
 
 # Run the application
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS final
