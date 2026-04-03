@@ -73,4 +73,6 @@ jobs:
             --base main \
             --head "${{ steps.sync.outputs.sync_branch }}" \
             --title "chore: sync dev to main" \
-            --body "Automated sync from \`dev\` to \`main\`.\n\n> \`samples/hosted-agent/version-manifest.json\` is excluded from this sync and kept at its current \`main\` version."
+            --body "Automated sync from \`dev\` to \`main\`.
+
+          This PR is created by an automated script. Please review carefully before merging."
