@@ -13,4 +13,4 @@ RUN pip install --upgrade pip && \
 
 EXPOSE 8088
 
-CMD ["python", "main2.py"]
+CMD ["python", "main.py"]
