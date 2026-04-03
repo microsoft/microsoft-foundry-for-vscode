@@ -80,8 +80,8 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          gh pr list --base main --state open --json number,headRefName --jq '.[] | select(.headRefName | startswith("sync/dev-to-main")) | .number + " " + .headRefName' | while read -r pr_number branch_name; do
-            echo "Closing PR #$pr_number (branch: $branch_name)"
+          gh pr list --base main --state open --json number,headRefName --jq '.[] | select(.headRefName | startswith("sync/dev-to-main")) | (.number | tostring)' | while read -r pr_number; do
+            echo "Closing PR #$pr_number"
             gh pr close "$pr_number" --comment "Superseded by a newer sync PR." --delete-branch
           done
 
